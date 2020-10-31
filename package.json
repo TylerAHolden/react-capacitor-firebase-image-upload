@@ -27,9 +27,10 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "rollup": "^1.29.0",
-    "rollup-plugin-sass": "^1.2.2",
     "rollup-plugin-typescript2": "^0.25.3",
-    "typescript": "^2.8.3"
+    "typescript": "^2.8.3",
+    "@types/styled-components": "^5.1.4",
+    "styled-components": "^5.2.1"
   },
   "files": [
     "dist"
