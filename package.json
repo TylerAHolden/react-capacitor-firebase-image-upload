@@ -1,10 +1,10 @@
 {
-  "name": "npm-react-typescript-template",
+  "name": "react-capacitor-firebase-image-upload",
   "version": "1.0.0",
-  "description": "A template for publishing a React + TypeScript package to npm",
-  "author": "ovieokeh",
+  "description": "React/Capacitor image upload component for firebase storage",
+  "author": "TylerAHolden",
   "license": "Apache-2.0",
-  "repository": "ovieokeh/npm-react-typescript-template",
+  "repository": "TylerAHolden/react-capacitor-firebase-image-upload",
   "main": "dist/index.js",
   "engines": {
     "node": ">=8",
