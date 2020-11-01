@@ -56,6 +56,7 @@ const Container = styled.div<any>`
   line-height: 15px;
   cursor: pointer;
   text-decoration: none;
+  border: none;
   background: ${({ color, clear }) => (clear ? 'transparent' : color)};
   ${TextContainer} {
     color: ${({ color, clear }) => (clear ? color : getColorContrast(color))};

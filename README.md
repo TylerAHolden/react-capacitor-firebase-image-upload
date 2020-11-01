@@ -4,11 +4,11 @@ An image upload UI built for react/capacitor utilizing firebase storage.
 
 ## Install
 
-`yarn add react-capacitor-firebase-image-upload`.
+> yarn add react-capacitor-firebase-image-upload
 
 ## Quick Usage
 
-> App.tsx (Or other high level component)
+App.tsx (Or other high level component)
 
 ```
 import { ImageUploadContextProvider, ImageUploadContext } from 'react-capacitor-firebase-image-upload';
