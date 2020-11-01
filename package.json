@@ -1,6 +1,6 @@
 {
   "name": "react-capacitor-firebase-image-upload",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "React/Capacitor image upload component for firebase storage",
   "author": "TylerAHolden",
   "license": "Apache-2.0",
