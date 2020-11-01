@@ -1,34 +1,61 @@
-# npm-react-typescript-template
+# React + Capacitor + Firebase Image Upload
 
-A template for publishing a React + TypeScript package to npm
+An image upload UI built for react/capacitor utilizing firebase storage.
 
-## How to use
+## Install
 
-Fork this repo, clone it to your local computer, and edit the `package.json` along with every other required file to match your project.
-Write the code for your package in TypeScript and Sass, compile it, and publish it to [npm](https://npmjs.com).
+`yarn add react-capacitor-firebase-image-upload`.
 
-To compile your code once, run
+## Quick Usage
 
-- `npm run build`.
+> App.tsx (Or other high level component)
 
-To compile your code once and refresh on file change, run
+```
+import { ImageUploadContextProvider, ImageUploadContext } from 'react-capacitor-firebase-image-upload';
 
-- `npm run start`.
+import * as firebase from 'firebase/app';
+import 'firebase/storage';
 
-To publish your package to npm, make sure you're logged in the correct account by running
+const fire = firebase.initializeApp({
+  ... firebase key stuff here ...
+});
 
-- `npm login`.
+const storage = firebase.storage().ref();
 
-Compile your package by running
+...
 
-- `npm run build`
+const App: React.FC = () => {
+  const { open } = useContext(ImageUploadContext);
+  return (
+    <App>
+        <ImageUploadContextProvider firebaseStorageRef={storage}>
+            {/* <Routes & Other App Stuff> */}
+            <button onClick={() => open(console.log)}>
+        </ImageUploadContextProvider>
+    </App>
+  );
+};
+```
 
-Update the package version accordingly by using
+## ImageUploadContextProviderProps
 
-- [`npm version [patch | minor | major]`](https://docs.npmjs.com/about-semantic-versioning)
+| Key                | Type                       | Required | Default                                  | Description                                   |
+| ------------------ | -------------------------- | -------- | ---------------------------------------- | --------------------------------------------- |
+| buttonColor        | string                     | No       | "#222"                                   | Color of the primary buttons                  |
+| acceptedFileTypes  | string[]                   | No       | ['image/png', 'image/jpeg', 'image/bmp'] | String array of accepted file types           |
+| firebaseStorageRef | firebase.storage.Reference | Yes      | undefined                                | The reference object to your firebase storage |
 
-Then publish your package by running
+## ImageUploadContext
 
-- `npm publish`
+| Key    | Type                                          | Description                                                     |
+| ------ | --------------------------------------------- | --------------------------------------------------------------- |
+| isOpen | boolean                                       | State of the image upload overlay                               |
+| open   | (callbackFunction?: ImageCallBackFn) => void; | Function to call when you want to open the image upload overlay |
+| close  | () => void;                                   | Function to call when you want the overlay to close             |
 
-### Happy Building ♡
+> type ImageCallBackFn = (newImageUrl?: string | undefined) => void;
+
+### Feature wishlist:
+
+- Cropping
+- Capacitor native camera/camera roll

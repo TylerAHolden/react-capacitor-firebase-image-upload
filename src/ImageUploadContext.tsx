@@ -26,6 +26,7 @@ export const ImageUploadContextProvider: React.FC<ImageUploadContextProviderProp
   children,
   acceptedFileTypes = defaultAcceptedFileTypes,
   firebaseStorageRef,
+  buttonColor,
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
