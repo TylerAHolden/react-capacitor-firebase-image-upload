@@ -200,10 +200,25 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
     }
   };
 
+  const getImageDimensions = async (src: string) =>
+    new Promise<{ width: number; height: number }>((resolve) => {
+      var img = new Image();
+
+      img.onload = () => {
+        var height = img.height;
+        var width = img.width;
+        resolve({ width, height });
+      };
+
+      img.src = src;
+    });
+
   const uploadImage = async () => {
     try {
       const res = await fetch(image);
       const blob = await res.blob();
+
+      const dimensionMetadata = await getImageDimensions(image);
 
       if (!acceptedFileTypes.includes(blob.type)) {
         setToastMessage('Cannot accept the file type: ' + blob.type);
@@ -224,19 +239,21 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
           blob.type.split('/')[1]
       );
 
-      const imageURI: string = await firebaseImageRef.put(blob).then(
-        async (snapshot: any) => {
-          const downloadURI = await snapshot.ref.getDownloadURL();
-          return downloadURI;
-        },
-        (err: any) => {
-          //   console.log(err);
-          setToastMessage(
-            err?.message || 'There was an error uploading the image :/'
-          );
-          return undefined;
-        }
-      );
+      const imageURI: string = await firebaseImageRef
+        .put(blob, { customMetadata: dimensionMetadata })
+        .then(
+          async (snapshot: any) => {
+            const downloadURI = await snapshot.ref.getDownloadURL();
+            return downloadURI;
+          },
+          (err: any) => {
+            //   console.log(err);
+            setToastMessage(
+              err?.message || 'There was an error uploading the image :/'
+            );
+            return undefined;
+          }
+        );
 
       if (imageURI) {
         // force https for images

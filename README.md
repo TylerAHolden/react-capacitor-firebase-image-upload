@@ -4,6 +4,10 @@ An image upload UI built for react/capacitor utilizing firebase storage.
 
 [Demo](https://react-capacitor-firebase-image-upload-example.netlify.app/)
 
+### Features:
+
+- Automatically adds image width & height in firebase storage customMetadata field.
+
 ## Install
 
 > yarn add react-capacitor-firebase-image-upload
