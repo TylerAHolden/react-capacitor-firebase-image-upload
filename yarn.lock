@@ -129,20 +129,20 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.5.tgz#77211291c1900a700b8a78cfafda3160d76949ed"
   integrity sha512-OWORNpfjMsSSUBVrRBVGECkhWcULOAJz9ZW8uK9qgxD+87M7jHRcvh/A96XXNhXTLmKcoYSQtBEX7lHMO7YRwg==
 
-"@ionic/core@5.4.1":
-  version "5.4.1"
-  resolved "https://registry.yarnpkg.com/@ionic/core/-/core-5.4.1.tgz#c9e3e0193cb2899788bd01a4dcb5121552f0dcba"
-  integrity sha512-yONXeHjbVGUSL7zPgiCv0fQkw47VHJJ+8zVkYgTg4At+B0VhoLAMgS/ah3EUwSVTOATXdHa6Ak5+71uHPKpViQ==
+"@ionic/core@5.5.0":
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/@ionic/core/-/core-5.5.0.tgz#2825c6c0a418be2c72037b4a702dfcc6de9c526d"
+  integrity sha512-LHKRQ4kmJN6Z9aqbYajYIQi3CFULjO/UI16frMu2Oc4rx8uewMNPBClAR5Dhy/jSkL3MiIOiuQzLPO4Kyd/zzw==
   dependencies:
     ionicons "^5.1.2"
     tslib "^1.10.0"
 
 "@ionic/react@^5.4.1":
-  version "5.4.1"
-  resolved "https://registry.yarnpkg.com/@ionic/react/-/react-5.4.1.tgz#ae9668768cd96b98745e3f77a4633638b37c933e"
-  integrity sha512-D12O6jc3ldQeK5odmi/n/kO+Qvv00Z/TiV4MbvuJ4CEKbCSrI5B8qA0+h5T8C8KX1lAzu5CvDgEf9ZvaptXiYw==
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/@ionic/react/-/react-5.5.0.tgz#35b85af666cfda2c541855f46af2dc797e38cab6"
+  integrity sha512-VVw6IZgD+tR2NFq79r+z07qkBQ+NCnS+AhiAphlL4REjm38LcUheqdGPumdG6rHf/H9VAJM1E+F2LJBYgBU6Lw==
   dependencies:
-    "@ionic/core" "5.4.1"
+    "@ionic/core" "5.5.0"
     ionicons "^5.1.2"
     tslib "*"
 

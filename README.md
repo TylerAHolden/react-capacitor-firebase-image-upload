@@ -49,15 +49,30 @@ const App: React.FC = () => {
 
 ## ImageUploadContext
 
-| Key    | Type                                          | Description                                                     |
-| ------ | --------------------------------------------- | --------------------------------------------------------------- |
-| isOpen | boolean                                       | State of the image upload overlay                               |
-| open   | (callbackFunction?: ImageCallBackFn) => void; | Function to call when you want to open the image upload overlay |
-| close  | () => void;                                   | Function to call when you want the overlay to close             |
+| Key    | Type                                                                     | Description                                                     |
+| ------ | ------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| isOpen | boolean                                                                  | State of the image upload overlay                               |
+| open   | (callbackFunction?: ImageCallBackFn, opts?: ImageUploadOptions) => void; | Function to call when you want to open the image upload overlay |
+| close  | () => void;                                                              | Function to call when you want the overlay to close             |
 
 > type ImageCallBackFn = (newImageUrl?: string | undefined) => void;
+
+## ImageUploadOptions
+
+| Key        | Type   | Description                                                                                        |
+| ---------- | ------ | -------------------------------------------------------------------------------------------------- |
+| pathPrefix | string | Prefix for the storage location (ex: "user_avatars/" would upload images to a user_avatars folder) |
 
 ### Feature wishlist:
 
 - Cropping
 - Capacitor native camera/camera roll
+
+<!-- For safe keeping on where the boilerplate came from: -->
+<!-- https://blog.logrocket.com/the-complete-guide-to-publishing-a-react-package-to-npm/ -->
+
+<!-- For local dev -->
+<!-- yarn link -->
+<!-- yarn link ../PROJECT/node_modules/react -->
+<!-- then in the test PROJECT -->
+<!-- yarn link react-capacitor-firebase-image-upload -->

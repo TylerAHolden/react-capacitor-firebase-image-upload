@@ -98,6 +98,7 @@ interface ImageUploadOverlayProps {
   close: () => void;
   callbackFn?: ImageCallBackFn;
   acceptedFileTypes: string[];
+  pathPrefix?: string;
   firebaseStorageRef: any; // firebase.storage.Reference
 }
 
@@ -108,6 +109,7 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
   acceptedFileTypes,
   firebaseStorageRef,
   buttonColor,
+  pathPrefix,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [image, setImage] = React.useState('');
@@ -216,7 +218,10 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
         return;
       }
       let firebaseImageRef = firebaseStorageRef.child(
-        imageUUID + '.' + blob.type.split('/')[1]
+        (pathPrefix ? pathPrefix : '') +
+          imageUUID +
+          '.' +
+          blob.type.split('/')[1]
       );
 
       const imageURI: string = await firebaseImageRef.put(blob).then(

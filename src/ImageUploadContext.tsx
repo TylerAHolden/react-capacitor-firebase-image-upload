@@ -4,7 +4,7 @@ import ImageUploadOverlay from './ImageUploadOverlay';
 
 type ImageUploadContextProps = {
   isOpen: boolean;
-  open: (callbackFunction?: ImageCallBackFn) => void;
+  open: (callbackFunction?: ImageCallBackFn, opts?: ImageUploadOptions) => void;
   close: () => void;
 };
 
@@ -12,6 +12,10 @@ type ImageUploadContextProviderProps = {
   buttonColor?: string;
   acceptedFileTypes?: string[];
   firebaseStorageRef: any; // firebase.storage.Reference
+};
+
+type ImageUploadOptions = {
+  pathPrefix?: string;
 };
 
 export type ImageCallBackFn = (newImageUrl?: string | undefined) => void;
@@ -29,16 +33,22 @@ export const ImageUploadContextProvider: React.FC<ImageUploadContextProviderProp
   buttonColor,
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [pathPrefix, setPathPrefix] = React.useState('');
 
   const callbackFn = React.useRef<ImageCallBackFn | undefined>();
 
-  const open = (callbackFunction?: ImageCallBackFn) => {
+  const open = (
+    callbackFunction?: ImageCallBackFn,
+    opts?: ImageUploadOptions
+  ) => {
     setIsOpen(true);
+    setPathPrefix(opts?.pathPrefix || '');
     callbackFn.current = callbackFunction;
   };
 
   const close = () => {
     setIsOpen(false);
+    setPathPrefix('');
     callbackFn.current = undefined;
   };
 
@@ -55,6 +65,7 @@ export const ImageUploadContextProvider: React.FC<ImageUploadContextProviderProp
         firebaseStorageRef={firebaseStorageRef}
         acceptedFileTypes={acceptedFileTypes}
         isOpen={isOpen}
+        pathPrefix={pathPrefix}
         close={close}
         buttonColor={buttonColor}
         callbackFn={callbackFn.current}
