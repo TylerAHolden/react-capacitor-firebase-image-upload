@@ -13,8 +13,8 @@
     "dev": "rollup -c -w",
     "build-watch": "rollup -c -w",
     "prepublishOnly": "npm run build",
-    "start-example": "cd example && yarn start",
-    "deploy-example": "yarn && cd example && yarn && yarn build",
+    "start-example": "cd demo && yarn start",
+    "deploy-example": "yarn build && cd demo && yarn && yarn build",
     "start": "concurrently --kill-others \"yarn build-watch\" \"yarn start-example\""
   },
   "dependencies": {

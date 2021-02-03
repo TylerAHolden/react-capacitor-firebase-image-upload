@@ -1,0 +1,33 @@
+#uploadButton {
+  outline: none;
+  border: none;
+  background: rgba(0, 0, 0, 0.04);
+  color: #222;
+  padding: 18px 28px;
+  text-align: center;
+  font-size: 22px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+#uploadButton:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.app-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+button {
+  border: none;
+}
+
+body,
+html,
+#root {
+  width: 100%;
+  height: 100%;
+}
