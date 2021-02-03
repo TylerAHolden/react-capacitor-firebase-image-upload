@@ -7,29 +7,14 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #5d7fb3;
-  --ifm-color-primary-dark: rgb(52, 76, 109);
-  --ifm-color-primary-darker: rgb(40, 56, 79);
-  --ifm-color-primary-darkest: rgb(33, 44, 60);
-  --ifm-color-primary-light: rgb(66, 97, 143);
-  --ifm-color-primary-lighter: rgb(74, 108, 160);
-  --ifm-color-primary-lightest: rgb(87, 128, 191);
+  --ifm-color-primary: #eea413;
+  --ifm-color-primary-dark: #d3691c;
+  --ifm-color-primary-darker: #bd6322;
+  --ifm-color-primary-darkest: #8f4d1f;
+  --ifm-color-primary-light: #f0aa1d;
+  --ifm-color-primary-lighter: #f0b030;
+  --ifm-color-primary-lightest: #f0bc54;
   --ifm-code-font-size: 95%;
-}
-
-nav.navbar {
-  background: #ece9e6; /* fallback for old browsers */
-  background: -webkit-linear-gradient(
-    to right,
-    #ece9e6,
-    #ffffff
-  ); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(
-    to right,
-    #ece9e6,
-    #ffffff
-  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  box-shadow: none;
 }
 
 .docusaurus-highlight-code-line {
