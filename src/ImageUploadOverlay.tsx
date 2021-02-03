@@ -87,7 +87,7 @@ const HiddenInput = styled.input<any>`
 `;
 
 const PreviewImage = styled.img`
-  max-height: 80%;
+  max-height: 50vh;
   max-width: 90%;
   margin-bottom: 6px;
 `;
@@ -221,16 +221,14 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
       const dimensionMetadata = await getImageDimensions(image);
 
       if (!acceptedFileTypes.includes(blob.type)) {
-        setToastMessage('Cannot accept the file type: ' + blob.type);
-        return;
+        throw new Error('Cannot accept the file type: ' + blob.type);
       }
 
       const imageUUID = uuid();
       if (!firebaseStorageRef) {
-        setToastMessage(
+        throw new Error(
           'Firebase Storage Reference Object not found. Make sure to pass firebase.storage().ref() into the provider'
         );
-        return;
       }
       let firebaseImageRef = firebaseStorageRef.child(
         (pathPrefix ? pathPrefix : '') +
@@ -247,11 +245,9 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
             return downloadURI;
           },
           (err: any) => {
-            //   console.log(err);
-            setToastMessage(
+            throw new Error(
               err?.message || 'There was an error uploading the image :/'
             );
-            return undefined;
           }
         );
 
@@ -263,10 +259,11 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
         _close(imageURI);
       }
     } catch (err) {
+      console.log(err);
       setToastMessage('Error: ' + err.message);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const _close = (newImageURL?: string) => {
