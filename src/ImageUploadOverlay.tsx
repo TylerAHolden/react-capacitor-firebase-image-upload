@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { CallbackFns, ImageUploadSuccess } from './ImageUploadContext';
-import { IonBackdrop, IonSpinner, IonToast } from '@ionic/react';
+import { IonBackdrop, IonSpinner } from '@ionic/react';
 
 import Button from './Button';
 import TitleBar from './TitleBar';
@@ -111,7 +111,6 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [image, setImage] = React.useState('');
-  const [toastMessage, setToastMessage] = React.useState<string>();
   const webInputRef = React.useRef();
 
   const clearState = () => {
@@ -168,10 +167,9 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
       const fileType = e.target.files[0].type;
 
       if (!acceptedFileTypes.includes(fileType)) {
-        setToastMessage(
-          'Cannot accept the file type: ' + e.target.files[0].type
+        return callbackFns?.errorCallback(
+          new Error('Cannot accept the file type: ' + e.target.files[0].type)
         );
-        return;
       }
       const reader = new FileReader();
       reader.addEventListener(
@@ -194,7 +192,7 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
       uploadImage();
     } else {
       setIsLoading(false);
-      setToastMessage('No image or input found');
+      return callbackFns?.errorCallback(new Error('No image or input found'));
     }
   };
 
@@ -264,9 +262,9 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
     } catch (err) {
       console.log(err);
       if (err instanceof Error) {
-        setToastMessage('Error: ' + err.message);
+        return callbackFns?.errorCallback(new Error('Error: ' + err.message));
       } else {
-        setToastMessage('Unknown error');
+        return callbackFns?.errorCallback(new Error('Unknown error'));
       }
     } finally {
       setIsLoading(false);
@@ -340,14 +338,6 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
           </OverlayContent>
         )}
       </OverlayContentContainer>
-      <IonToast
-        isOpen={toastMessage ? true : false}
-        onDidDismiss={() => setToastMessage(undefined)}
-        message={toastMessage}
-        duration={3200}
-        mode="ios"
-        position="top"
-      />
     </Container>
   );
 };

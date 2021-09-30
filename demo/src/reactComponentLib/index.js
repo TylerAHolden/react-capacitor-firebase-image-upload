@@ -1,6 +1,6 @@
 /* eslint-disable */
 import * as React from 'react';
-import { isPlatform, IonIcon, IonBackdrop, IonSpinner, IonToast } from '@ionic/react';
+import { isPlatform, IonIcon, IonBackdrop, IonSpinner } from '@ionic/react';
 import styled from 'styled-components';
 import { closeOutline } from 'ionicons/icons';
 import { v4 } from 'uuid';
@@ -241,7 +241,6 @@ const PreviewImage = styled.img `
 const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseStorageRef, buttonColor, pathPrefix, }) => {
     const [isLoading, setIsLoading] = React.useState(false);
     const [image, setImage] = React.useState('');
-    const [toastMessage, setToastMessage] = React.useState();
     const webInputRef = React.useRef();
     const clearState = () => {
         setIsLoading(false);
@@ -289,8 +288,7 @@ const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseSto
         if (((_a = e === null || e === void 0 ? void 0 : e.target) === null || _a === void 0 ? void 0 : _a.files) && e.target.files[0]) {
             const fileType = e.target.files[0].type;
             if (!acceptedFileTypes.includes(fileType)) {
-                setToastMessage('Cannot accept the file type: ' + e.target.files[0].type);
-                return;
+                return callbackFns === null || callbackFns === void 0 ? void 0 : callbackFns.errorCallback(new Error('Cannot accept the file type: ' + e.target.files[0].type));
             }
             const reader = new FileReader();
             reader.addEventListener('load', function () {
@@ -307,7 +305,7 @@ const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseSto
         }
         else {
             setIsLoading(false);
-            setToastMessage('No image or input found');
+            return callbackFns === null || callbackFns === void 0 ? void 0 : callbackFns.errorCallback(new Error('No image or input found'));
         }
     };
     const getImageDimensions = (src) => __awaiter(void 0, void 0, void 0, function* () {
@@ -356,10 +354,10 @@ const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseSto
         catch (err) {
             console.log(err);
             if (err instanceof Error) {
-                setToastMessage('Error: ' + err.message);
+                return callbackFns === null || callbackFns === void 0 ? void 0 : callbackFns.errorCallback(new Error('Error: ' + err.message));
             }
             else {
-                setToastMessage('Unknown error');
+                return callbackFns === null || callbackFns === void 0 ? void 0 : callbackFns.errorCallback(new Error('Unknown error'));
             }
         }
         finally {
@@ -387,8 +385,7 @@ const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseSto
                 React.createElement(Button, { onClick: getFile, color: buttonColor || '#222' }, "Browse Files"),
                 React.createElement(HiddenInput, { onChange: (e) => getImageFileData(e), ref: webInputRef, type: "file" }),
                 React.createElement(OrText, null, "or"),
-                isPlatform('desktop') ? (React.createElement(OrText, null, "\u2318 + V to Paste an Image or URL")) : (React.createElement(SecretTextInput, { value: '', placeholder: "Double tap here to paste an image" }))))),
-        React.createElement(IonToast, { isOpen: toastMessage ? true : false, onDidDismiss: () => setToastMessage(undefined), message: toastMessage, duration: 3200, mode: "ios", position: "top" })));
+                isPlatform('desktop') ? (React.createElement(OrText, null, "\u2318 + V to Paste an Image or URL")) : (React.createElement(SecretTextInput, { value: '', placeholder: "Double tap here to paste an image" })))))));
 };
 
 const defaultAcceptedFileTypes = ['image/png', 'image/jpeg', 'image/bmp'];
