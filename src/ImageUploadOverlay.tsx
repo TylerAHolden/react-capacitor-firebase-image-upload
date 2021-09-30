@@ -235,12 +235,11 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
           'Firebase Storage Reference Object not found. Make sure to pass firebase.storage().ref() into the provider'
         );
       }
-      const firebaseImageRef = firebaseStorageRef.child(
-        (pathPrefix ? pathPrefix : '') +
-          imageUUID +
-          '.' +
-          blob.type.split('/')[1]
-      );
+
+      const fileType = blob.type.split('/')[1];
+      const fullPath =
+        (pathPrefix ? pathPrefix : '') + imageUUID + '.' + fileType;
+      const firebaseImageRef = firebaseStorageRef.child(fullPath);
 
       const imageURI: string = await firebaseImageRef
         .put(blob, { customMetadata: dimensionMetadata })
@@ -264,8 +263,9 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
         _close({
           downloadUrl: imageURI,
           imageUUID,
+          fileType,
           ...dimensionMetadata,
-          fullPath: firebaseImageRef, // todo set this to path
+          fullPath,
         });
       }
     } catch (err) {

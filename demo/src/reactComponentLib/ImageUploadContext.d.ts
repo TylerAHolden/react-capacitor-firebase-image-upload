@@ -18,6 +18,7 @@ export declare type ImageUploadSuccess = {
     width: number;
     height: number;
     fullPath: string;
+    fileType: string;
 };
 export declare type ImageUploadCanceled = undefined;
 export declare type CallbackFns = {

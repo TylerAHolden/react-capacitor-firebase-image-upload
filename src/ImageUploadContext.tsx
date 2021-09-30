@@ -28,6 +28,7 @@ export type ImageUploadSuccess = {
   width: number;
   height: number;
   fullPath: string;
+  fileType: string;
 };
 
 export type ImageUploadCanceled = undefined;
