@@ -1,6 +1,6 @@
 /* eslint-disable */
 import * as React from 'react';
-import { isPlatform, IonIcon, IonBackdrop, IonSpinner } from '@ionic/react';
+import { isPlatform, IonIcon, IonSpinner } from '@ionic/react';
 import styled from 'styled-components';
 import { closeOutline } from 'ionicons/icons';
 import { v4 } from 'uuid';
@@ -174,12 +174,20 @@ const Container = styled.div `
   right: 0;
   bottom: 0;
   backdrop-filter: blur(12px) brightness(102%) saturate(1.4);
-  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   padding: 12px;
+`;
+const Backdrop = styled.div `
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  cursor: pointer;
+  z-index: 1;
 `;
 const OverlayContentContainer = styled.div `
   z-index: 10;
@@ -373,7 +381,7 @@ const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseSto
     if (!Boolean(callbackFns))
         return null;
     return (React.createElement(Container, null,
-        React.createElement(IonBackdrop, { onIonBackdropTap: () => _close(undefined) }),
+        React.createElement(Backdrop, { onClick: () => _close(undefined) }),
         React.createElement(OverlayContentContainer, null,
             React.createElement(TitleBar, { title: image ? 'Preview' : 'Image Upload', onCloseClick: () => _close(undefined), helperText: image
                     ? undefined

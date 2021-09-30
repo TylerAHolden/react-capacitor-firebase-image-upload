@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import { CallbackFns, ImageUploadSuccess } from './ImageUploadContext';
-import { IonBackdrop, IonSpinner } from '@ionic/react';
 
 import Button from './Button';
+import { IonSpinner } from '@ionic/react';
 import TitleBar from './TitleBar';
 import { isPlatform } from '@ionic/react';
 import { oxfordJoinArray } from './utils';
@@ -20,12 +20,21 @@ const Container = styled.div`
   right: 0;
   bottom: 0;
   backdrop-filter: blur(12px) brightness(102%) saturate(1.4);
-  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   padding: 12px;
+`;
+
+const Backdrop = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  cursor: pointer;
+  z-index: 1;
 `;
 
 const OverlayContentContainer = styled.div`
@@ -281,7 +290,7 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
   if (!Boolean(callbackFns)) return null;
   return (
     <Container>
-      <IonBackdrop onIonBackdropTap={() => _close(undefined)} />
+      <Backdrop onClick={() => _close(undefined)} />
       <OverlayContentContainer>
         <TitleBar
           title={image ? 'Preview' : 'Image Upload'}

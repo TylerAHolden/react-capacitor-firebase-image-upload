@@ -36,7 +36,7 @@ const App: React.FC = () => {
     <App>
         <ImageUploadContextProvider firebaseStorageRef={storage}>
             {/* <Routes & Other App Stuff> */}
-            <button onClick={() => open(console.log)}>
+            <button onClick={() => open(console.log, console.error)}>
         </ImageUploadContextProvider>
     </App>
   );
@@ -53,13 +53,11 @@ const App: React.FC = () => {
 
 ## ImageUploadContext
 
-| Key    | Type                                                                     | Description                                                     |
-| ------ | ------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| isOpen | boolean                                                                  | State of the image upload overlay                               |
-| open   | (callbackFunction?: ImageCallBackFn, opts?: ImageUploadOptions) => void; | Function to call when you want to open the image upload overlay |
-| close  | () => void;                                                              | Function to call when you want the overlay to close             |
-
-> type ImageCallBackFn = (newImageUrl?: string | undefined) => void;
+| Key    | Type                                                   | Description                                                                                 |
+| ------ | ------------------------------------------------------ | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| isOpen | boolean                                                | State of the image upload overlay                                                           |
+| open   | (successOrCancelFunction?: (result: ImageUploadSuccess | undefined) => void, errorCallback: (err:Error) => void, opts?: ImageUploadOptions) => void; | Function to call when you want to open the image upload overlay |
+| close  | () => void;                                            | Function to call when you want the overlay to close                                         |
 
 ## ImageUploadOptions
 
