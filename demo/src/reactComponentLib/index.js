@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { createElement, Fragment, useState, useRef, useCallback, useEffect, createContext } from 'react';
+import * as React from 'react';
 import { isPlatform, IonIcon, IonBackdrop, IonSpinner, IonToast } from '@ionic/react';
 import styled from 'styled-components';
 import { closeOutline } from 'ionicons/icons';
@@ -68,7 +68,7 @@ const IconContainer = styled.div `
   display: flex;
   ${({ iconOnly }) => (iconOnly ? `font-size: 28px;` : `padding-right: 6px;`)}
 `;
-const Container = styled.div `
+const Container$2 = styled.div `
   display: flex;
   margin: 0;
   padding: ${({ icon, small, iconOnly }) => {
@@ -106,10 +106,10 @@ const Container = styled.div `
   }
 `;
 const Button = ({ small = false, children, disabled, icon, href, color, clear = false, onClick, uppercase = false, className, target, }) => {
-    return (createElement(Container, { as: href ? 'a' : 'button', small: small, icon: icon, href: href, target: target, disabled: disabled, onClick: () => (onClick ? onClick() : undefined), clear: clear, color: color, iconOnly: !children ? true : false, className: className },
-        icon && (createElement(IconContainer, { iconOnly: !children ? true : false },
-            createElement(IonIcon, { icon: icon }))),
-        createElement(TextContainer, { uppercase: uppercase }, children)));
+    return (React.createElement(Container$2, { as: href ? 'a' : 'button', small: small, icon: icon, href: href, target: target, disabled: disabled, onClick: () => (onClick ? onClick() : undefined), clear: clear, color: color, iconOnly: !children ? true : false, className: className },
+        icon && (React.createElement(IconContainer, { iconOnly: !children ? true : false },
+            React.createElement(IonIcon, { icon: icon }))),
+        React.createElement(TextContainer, { uppercase: uppercase }, children)));
 };
 
 const Container$1 = styled.div `
@@ -145,12 +145,12 @@ const BottomBorder = styled.div `
   margin-bottom: 8px;
 `;
 const TitleBar = ({ title, onCloseClick, helperText, }) => {
-    return (createElement(Fragment, null,
-        createElement(Container$1, null,
-            createElement(StyledH2, null, title),
-            createElement(Button, { onClick: onCloseClick, color: "#222", clear: true, icon: closeOutline })),
-        createElement(BottomBorder, null),
-        helperText && createElement(StyledP, null, helperText)));
+    return (React.createElement(React.Fragment, null,
+        React.createElement(Container$1, null,
+            React.createElement(StyledH2, null, title),
+            React.createElement(Button, { onClick: onCloseClick, color: "#222", clear: true, icon: closeOutline })),
+        React.createElement(BottomBorder, null),
+        helperText && React.createElement(StyledP, null, helperText)));
 };
 
 const oxfordJoinArray = (arr, conjunction, ifempty) => {
@@ -166,7 +166,7 @@ const oxfordJoinArray = (arr, conjunction, ifempty) => {
     return arr.join(', ');
 };
 
-const Container$2 = styled.div `
+const Container = styled.div `
   position: fixed;
   z-index: 30000;
   top: 0;
@@ -238,16 +238,16 @@ const PreviewImage = styled.img `
   max-width: 90%;
   margin-bottom: 6px;
 `;
-const ImageUploadOverlay = ({ isOpen, close, callbackFn, acceptedFileTypes, firebaseStorageRef, buttonColor, pathPrefix, }) => {
-    const [isLoading, setIsLoading] = useState(false);
-    const [image, setImage] = useState('');
-    const [toastMessage, setToastMessage] = useState();
-    const webInputRef = useRef();
+const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseStorageRef, buttonColor, pathPrefix, }) => {
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [image, setImage] = React.useState('');
+    const [toastMessage, setToastMessage] = React.useState();
+    const webInputRef = React.useRef();
     const clearState = () => {
         setIsLoading(false);
         setImage('');
     };
-    const checkPasted = useCallback((e) => {
+    const checkPasted = React.useCallback((e) => {
         if (e.clipboardData && e.clipboardData.items.length > 0) {
             for (let i = 0; i < e.clipboardData.items.length; i++) {
                 const fileType = e.clipboardData.items[i].type;
@@ -271,15 +271,15 @@ const ImageUploadOverlay = ({ isOpen, close, callbackFn, acceptedFileTypes, fire
             }
         }
     }, []);
-    useEffect(() => {
+    React.useEffect(() => {
         clearState();
-        if (isOpen) {
+        if (Boolean(callbackFns)) {
             window.addEventListener('paste', checkPasted);
         }
         else {
             window.removeEventListener('paste', checkPasted);
         }
-    }, [checkPasted, isOpen]);
+    }, [checkPasted, callbackFns]);
     const getFile = () => __awaiter(void 0, void 0, void 0, function* () {
         const webInputElement = webInputRef === null || webInputRef === void 0 ? void 0 : webInputRef.current;
         webInputElement.click();
@@ -333,7 +333,7 @@ const ImageUploadOverlay = ({ isOpen, close, callbackFn, acceptedFileTypes, fire
             if (!firebaseStorageRef) {
                 throw new Error('Firebase Storage Reference Object not found. Make sure to pass firebase.storage().ref() into the provider');
             }
-            let firebaseImageRef = firebaseStorageRef.child((pathPrefix ? pathPrefix : '') +
+            const firebaseImageRef = firebaseStorageRef.child((pathPrefix ? pathPrefix : '') +
                 imageUUID +
                 '.' +
                 blob.type.split('/')[1]);
@@ -350,64 +350,67 @@ const ImageUploadOverlay = ({ isOpen, close, callbackFn, acceptedFileTypes, fire
                 if (imageURI.indexOf('http:') !== -1) {
                     imageURI.replace('http:', 'https:');
                 }
-                _close(imageURI);
+                _close(Object.assign(Object.assign({ downloadUrl: imageURI, imageUUID }, dimensionMetadata), { fullPath: firebaseImageRef }));
             }
         }
         catch (err) {
             console.log(err);
-            setToastMessage('Error: ' + err.message);
+            if (err instanceof Error) {
+                setToastMessage('Error: ' + err.message);
+            }
+            else {
+                setToastMessage('Unknown error');
+            }
         }
         finally {
             setIsLoading(false);
         }
     });
-    const _close = (newImageURL) => {
-        if (callbackFn)
-            callbackFn(newImageURL);
+    const _close = (imageAttrs) => {
+        if (callbackFns === null || callbackFns === void 0 ? void 0 : callbackFns.successCallback) {
+            callbackFns.successCallback(imageAttrs);
+        }
         close();
     };
-    if (!isOpen)
+    if (!Boolean(callbackFns))
         return null;
-    return (createElement(Container$2, null,
-        createElement(IonBackdrop, { onIonBackdropTap: () => _close(undefined) }),
-        createElement(OverlayContentContainer, null,
-            createElement(TitleBar, { title: image ? 'Preview' : 'Image Upload', onCloseClick: () => _close(undefined), helperText: image
+    return (React.createElement(Container, null,
+        React.createElement(IonBackdrop, { onIonBackdropTap: () => _close(undefined) }),
+        React.createElement(OverlayContentContainer, null,
+            React.createElement(TitleBar, { title: image ? 'Preview' : 'Image Upload', onCloseClick: () => _close(undefined), helperText: image
                     ? undefined
                     : `Accepted File Types: ${oxfordJoinArray(acceptedFileTypes.map((fileType) => fileType.split('/')[1]), '&', 'None')}` }),
-            image ? (createElement(OverlayContent, null,
-                createElement(PreviewImage, { src: image, alt: "Selected" }),
-                createElement(Button, { onClick: () => clearState(), clear: true, color: buttonColor || '#222', small: true }, "Clear Image"),
-                createElement(SaveButton, { color: buttonColor || '#222', disabled: isLoading, onClick: validateImage }, isLoading ? createElement(IonSpinner, { name: "crescent" }) : 'Save'))) : (createElement(OverlayContent, null,
-                createElement(Button, { onClick: getFile, color: buttonColor || '#222' }, "Browse Files"),
-                createElement(HiddenInput, { onChange: (e) => getImageFileData(e), ref: webInputRef, type: "file" }),
-                createElement(OrText, null, "or"),
-                isPlatform('desktop') ? (createElement(OrText, null, "\u2318 + V to Paste an Image or URL")) : (createElement(SecretTextInput, { value: '', placeholder: "Double tap here to paste an image" }))))),
-        createElement(IonToast, { isOpen: toastMessage ? true : false, onDidDismiss: () => setToastMessage(undefined), message: toastMessage, duration: 3200, mode: "ios", position: "top" })));
+            image ? (React.createElement(OverlayContent, null,
+                React.createElement(PreviewImage, { src: image, alt: "Selected" }),
+                React.createElement(Button, { onClick: () => clearState(), clear: true, color: buttonColor || '#222', small: true }, "Clear Image"),
+                React.createElement(SaveButton, { color: buttonColor || '#222', disabled: isLoading, onClick: validateImage }, isLoading ? React.createElement(IonSpinner, { name: "crescent" }) : 'Save'))) : (React.createElement(OverlayContent, null,
+                React.createElement(Button, { onClick: getFile, color: buttonColor || '#222' }, "Browse Files"),
+                React.createElement(HiddenInput, { onChange: (e) => getImageFileData(e), ref: webInputRef, type: "file" }),
+                React.createElement(OrText, null, "or"),
+                isPlatform('desktop') ? (React.createElement(OrText, null, "\u2318 + V to Paste an Image or URL")) : (React.createElement(SecretTextInput, { value: '', placeholder: "Double tap here to paste an image" }))))),
+        React.createElement(IonToast, { isOpen: toastMessage ? true : false, onDidDismiss: () => setToastMessage(undefined), message: toastMessage, duration: 3200, mode: "ios", position: "top" })));
 };
 
 const defaultAcceptedFileTypes = ['image/png', 'image/jpeg', 'image/bmp'];
-const ImageUploadContext = createContext({});
+const ImageUploadContext = React.createContext({});
 const ImageUploadContextProvider = ({ children, acceptedFileTypes = defaultAcceptedFileTypes, firebaseStorageRef, buttonColor, }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [pathPrefix, setPathPrefix] = useState('');
-    const callbackFn = useRef();
-    const open = (callbackFunction, opts) => {
-        setIsOpen(true);
+    const [callbackFns, setCallbackFns] = React.useState();
+    const [pathPrefix, setPathPrefix] = React.useState('');
+    const open = (successCallback, errorCallback, opts) => {
         setPathPrefix((opts === null || opts === void 0 ? void 0 : opts.pathPrefix) || '');
-        callbackFn.current = callbackFunction;
+        setCallbackFns({ successCallback, errorCallback });
     };
     const close = () => {
-        setIsOpen(false);
+        setCallbackFns(undefined);
         setPathPrefix('');
-        callbackFn.current = undefined;
     };
-    return (createElement(ImageUploadContext.Provider, { value: {
-            isOpen,
+    return (React.createElement(ImageUploadContext.Provider, { value: {
+            isOpen: Boolean(setCallbackFns),
             open,
             close,
         } },
         children,
-        createElement(ImageUploadOverlay, { firebaseStorageRef: firebaseStorageRef, acceptedFileTypes: acceptedFileTypes, isOpen: isOpen, pathPrefix: pathPrefix, close: close, buttonColor: buttonColor, callbackFn: callbackFn.current })));
+        React.createElement(ImageUploadOverlay, { firebaseStorageRef: firebaseStorageRef, acceptedFileTypes: acceptedFileTypes, pathPrefix: pathPrefix, close: close, buttonColor: buttonColor, callbackFns: callbackFns })));
 };
 
 export { ImageUploadContext, ImageUploadContextProvider };

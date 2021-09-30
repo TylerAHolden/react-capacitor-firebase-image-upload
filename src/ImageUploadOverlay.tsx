@@ -1,9 +1,9 @@
 import * as React from 'react';
 
+import { CallbackFns, ImageUploadSuccess } from './ImageUploadContext';
 import { IonBackdrop, IonSpinner, IonToast } from '@ionic/react';
 
 import Button from './Button';
-import { ImageCallBackFn } from './ImageUploadContext';
 import TitleBar from './TitleBar';
 import { isPlatform } from '@ionic/react';
 import { oxfordJoinArray } from './utils';
@@ -94,18 +94,16 @@ const PreviewImage = styled.img`
 
 interface ImageUploadOverlayProps {
   buttonColor?: string;
-  isOpen?: boolean;
   close: () => void;
-  callbackFn?: ImageCallBackFn;
+  callbackFns?: CallbackFns;
   acceptedFileTypes: string[];
   pathPrefix?: string;
   firebaseStorageRef: any; // firebase.storage.Reference
 }
 
 const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
-  isOpen,
   close,
-  callbackFn,
+  callbackFns,
   acceptedFileTypes,
   firebaseStorageRef,
   buttonColor,
@@ -153,12 +151,12 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
 
   React.useEffect(() => {
     clearState();
-    if (isOpen) {
+    if (Boolean(callbackFns)) {
       window.addEventListener('paste', checkPasted as EventListener);
     } else {
       window.removeEventListener('paste', checkPasted as EventListener);
     }
-  }, [checkPasted, isOpen]);
+  }, [checkPasted, callbackFns]);
 
   const getFile = async () => {
     const webInputElement: any = webInputRef?.current;
@@ -230,7 +228,7 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
           'Firebase Storage Reference Object not found. Make sure to pass firebase.storage().ref() into the provider'
         );
       }
-      let firebaseImageRef = firebaseStorageRef.child(
+      const firebaseImageRef = firebaseStorageRef.child(
         (pathPrefix ? pathPrefix : '') +
           imageUUID +
           '.' +
@@ -256,22 +254,33 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
         if (imageURI.indexOf('http:') !== -1) {
           imageURI.replace('http:', 'https:');
         }
-        _close(imageURI);
+        _close({
+          downloadUrl: imageURI,
+          imageUUID,
+          ...dimensionMetadata,
+          fullPath: firebaseImageRef, // todo set this to path
+        });
       }
     } catch (err) {
       console.log(err);
-      setToastMessage('Error: ' + err.message);
+      if (err instanceof Error) {
+        setToastMessage('Error: ' + err.message);
+      } else {
+        setToastMessage('Unknown error');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const _close = (newImageURL?: string) => {
-    if (callbackFn) callbackFn(newImageURL);
+  const _close = (imageAttrs: ImageUploadSuccess | undefined) => {
+    if (callbackFns?.successCallback) {
+      callbackFns.successCallback(imageAttrs);
+    }
     close();
   };
 
-  if (!isOpen) return null;
+  if (!Boolean(callbackFns)) return null;
   return (
     <Container>
       <IonBackdrop onIonBackdropTap={() => _close(undefined)} />

@@ -1,7 +1,7 @@
 import * as React from 'react';
 declare type ImageUploadContextProps = {
     isOpen: boolean;
-    open: (callbackFunction?: ImageCallBackFn, opts?: ImageUploadOptions) => void;
+    open: (successCallback: CallbackFns['successCallback'], errorCallback: CallbackFns['errorCallback'], opts?: ImageUploadOptions) => void;
     close: () => void;
 };
 declare type ImageUploadContextProviderProps = {
@@ -12,7 +12,18 @@ declare type ImageUploadContextProviderProps = {
 declare type ImageUploadOptions = {
     pathPrefix?: string;
 };
-export declare type ImageCallBackFn = (newImageUrl?: string | undefined) => void;
+export declare type ImageUploadSuccess = {
+    downloadUrl: string;
+    imageUUID: string;
+    width: number;
+    height: number;
+    fullPath: string;
+};
+export declare type ImageUploadCanceled = undefined;
+export declare type CallbackFns = {
+    successCallback: (result: ImageUploadSuccess | ImageUploadCanceled) => void;
+    errorCallback: (err: Error) => void;
+};
 export declare const ImageUploadContext: React.Context<ImageUploadContextProps>;
 export declare const ImageUploadContextProvider: React.FC<ImageUploadContextProviderProps>;
 export {};

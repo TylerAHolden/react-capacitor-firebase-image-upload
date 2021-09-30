@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { ImageCallBackFn } from './ImageUploadContext';
+import { CallbackFns } from './ImageUploadContext';
 interface ImageUploadOverlayProps {
     buttonColor?: string;
-    isOpen?: boolean;
     close: () => void;
-    callbackFn?: ImageCallBackFn;
+    callbackFns?: CallbackFns;
     acceptedFileTypes: string[];
     pathPrefix?: string;
     firebaseStorageRef: any;
