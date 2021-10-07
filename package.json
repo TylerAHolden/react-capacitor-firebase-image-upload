@@ -15,6 +15,7 @@
     "prepublishOnly": "npm run build",
     "start-example": "cd demo && yarn start",
     "deploy-example": "yarn build && cd demo && yarn && yarn build",
+    "deploy": "npm version patch && npm publish",
     "start": "concurrently --kill-others \"yarn build-watch\" \"yarn start-example\""
   },
   "dependencies": {
