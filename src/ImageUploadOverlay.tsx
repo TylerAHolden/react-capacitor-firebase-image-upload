@@ -101,6 +101,12 @@ const PreviewImage = styled.img`
   margin-bottom: 6px;
 `;
 
+const StyledIonSpinner = styled(IonSpinner)`
+  margin: -5px 0;
+  height: 23px;
+  width: 23px;
+`;
+
 interface ImageUploadOverlayProps {
   buttonColor?: string;
   close: () => void;
@@ -289,9 +295,12 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
 
   if (!Boolean(callbackFns)) return null;
   return (
-    <Container>
-      <Backdrop onClick={() => _close(undefined)} />
-      <OverlayContentContainer>
+    <Container className="image-upload-overlay">
+      <Backdrop
+        className="image-upload-backdrop"
+        onClick={() => _close(undefined)}
+      />
+      <OverlayContentContainer className="image-upload-overlay-container">
         <TitleBar
           title={image ? 'Preview' : 'Image Upload'}
           onCloseClick={() => _close(undefined)}
@@ -321,7 +330,7 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
               disabled={isLoading}
               onClick={validateImage}
             >
-              {isLoading ? <IonSpinner name="crescent" /> : 'Save'}
+              {isLoading ? <StyledIonSpinner name="crescent" /> : 'Save'}
             </SaveButton>
           </OverlayContent>
         ) : (

@@ -1,2 +1,1 @@
-import { ImageUploadContext, ImageUploadContextProvider } from './ImageUploadContext';
-export { ImageUploadContextProvider, ImageUploadContext };
+export * from './ImageUploadContext';

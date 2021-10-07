@@ -146,7 +146,7 @@ const BottomBorder = styled.div `
 `;
 const TitleBar = ({ title, onCloseClick, helperText, }) => {
     return (React.createElement(React.Fragment, null,
-        React.createElement(Container$1, null,
+        React.createElement(Container$1, { className: "image-upload-overlay-title-bar" },
             React.createElement(StyledH2, null, title),
             React.createElement(Button, { onClick: onCloseClick, color: "#222", clear: true, icon: closeOutline })),
         React.createElement(BottomBorder, null),
@@ -245,6 +245,11 @@ const PreviewImage = styled.img `
   max-height: 50vh;
   max-width: 90%;
   margin-bottom: 6px;
+`;
+const StyledIonSpinner = styled(IonSpinner) `
+  margin: -5px 0;
+  height: 23px;
+  width: 23px;
 `;
 const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseStorageRef, buttonColor, pathPrefix, }) => {
     const [isLoading, setIsLoading] = React.useState(false);
@@ -380,16 +385,16 @@ const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseSto
     };
     if (!Boolean(callbackFns))
         return null;
-    return (React.createElement(Container, null,
-        React.createElement(Backdrop, { onClick: () => _close(undefined) }),
-        React.createElement(OverlayContentContainer, null,
+    return (React.createElement(Container, { className: "image-upload-overlay" },
+        React.createElement(Backdrop, { className: "image-upload-backdrop", onClick: () => _close(undefined) }),
+        React.createElement(OverlayContentContainer, { className: "image-upload-overlay-container" },
             React.createElement(TitleBar, { title: image ? 'Preview' : 'Image Upload', onCloseClick: () => _close(undefined), helperText: image
                     ? undefined
                     : `Accepted File Types: ${oxfordJoinArray(acceptedFileTypes.map((fileType) => fileType.split('/')[1]), '&', 'None')}` }),
             image ? (React.createElement(OverlayContent, null,
                 React.createElement(PreviewImage, { src: image, alt: "Selected" }),
                 React.createElement(Button, { onClick: () => clearState(), clear: true, color: buttonColor || '#222', small: true }, "Clear Image"),
-                React.createElement(SaveButton, { color: buttonColor || '#222', disabled: isLoading, onClick: validateImage }, isLoading ? React.createElement(IonSpinner, { name: "crescent" }) : 'Save'))) : (React.createElement(OverlayContent, null,
+                React.createElement(SaveButton, { color: buttonColor || '#222', disabled: isLoading, onClick: validateImage }, isLoading ? React.createElement(StyledIonSpinner, { name: "crescent" }) : 'Save'))) : (React.createElement(OverlayContent, null,
                 React.createElement(Button, { onClick: getFile, color: buttonColor || '#222' }, "Browse Files"),
                 React.createElement(HiddenInput, { onChange: (e) => getImageFileData(e), ref: webInputRef, type: "file" }),
                 React.createElement(OrText, null, "or"),

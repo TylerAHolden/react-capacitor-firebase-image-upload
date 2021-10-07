@@ -53,7 +53,7 @@ const TitleBar: React.FC<TitleBarProps> = ({
 }) => {
   return (
     <>
-      <Container>
+      <Container className="image-upload-overlay-title-bar">
         <StyledH2>{title}</StyledH2>
         <Button onClick={onCloseClick} color="#222" clear icon={closeOutline} />
       </Container>
