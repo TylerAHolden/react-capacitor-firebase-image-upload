@@ -401,7 +401,12 @@ const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseSto
                 isPlatform('desktop') ? (React.createElement(OrText, null, "\u2318 + V to Paste an Image or URL")) : (React.createElement(SecretTextInput, { value: '', placeholder: "Double tap here to paste an image" })))))));
 };
 
-const defaultAcceptedFileTypes = ['image/png', 'image/jpeg', 'image/bmp'];
+const defaultAcceptedFileTypes = [
+    'image/png',
+    'image/jpeg',
+    'image/bmp',
+    'image/webp',
+];
 const ImageUploadContext = React.createContext({});
 const ImageUploadContextProvider = ({ children, acceptedFileTypes = defaultAcceptedFileTypes, firebaseStorageRef, buttonColor, }) => {
     const [callbackFns, setCallbackFns] = React.useState();

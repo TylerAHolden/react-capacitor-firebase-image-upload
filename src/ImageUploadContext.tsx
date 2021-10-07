@@ -38,7 +38,12 @@ export type CallbackFns = {
   errorCallback: (err: Error) => void;
 };
 
-const defaultAcceptedFileTypes = ['image/png', 'image/jpeg', 'image/bmp'];
+const defaultAcceptedFileTypes = [
+  'image/png',
+  'image/jpeg',
+  'image/bmp',
+  'image/webp',
+];
 
 export const ImageUploadContext = React.createContext<ImageUploadContextProps>(
   {} as ImageUploadContextProps

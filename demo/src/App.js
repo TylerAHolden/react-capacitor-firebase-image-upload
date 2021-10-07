@@ -18,12 +18,13 @@ function App() {
 const AppComponent = () => {
   const { open } = React.useContext(ImageUploadContext);
 
+  const handleError = (err) => {
+    window.alert(err);
+  };
+
   return (
     <div className="app-container">
-      <button
-        id="uploadButton"
-        onClick={() => open(console.log, console.error)}
-      >
+      <button id="uploadButton" onClick={() => open(console.log, handleError)}>
         Open Image Upload Overlay
       </button>
     </div>
