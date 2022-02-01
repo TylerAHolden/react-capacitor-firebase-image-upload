@@ -251,7 +251,7 @@ const StyledIonSpinner = styled(IonSpinner) `
   height: 23px;
   width: 23px;
 `;
-const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseStorageRef, buttonColor, pathPrefix, }) => {
+const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseStorageRef, buttonColor, uploadOptions, }) => {
     const [isLoading, setIsLoading] = React.useState(false);
     const [image, setImage] = React.useState('');
     const webInputRef = React.useRef();
@@ -340,12 +340,15 @@ const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseSto
             if (!acceptedFileTypes.includes(blob.type)) {
                 throw new Error('Cannot accept the file type: ' + blob.type);
             }
-            const imageUUID = v4();
+            const imageUUID = (uploadOptions === null || uploadOptions === void 0 ? void 0 : uploadOptions.imageFileName) ? uploadOptions === null || uploadOptions === void 0 ? void 0 : uploadOptions.imageFileName : v4();
             if (!firebaseStorageRef) {
                 throw new Error('Firebase Storage Reference Object not found. Make sure to pass firebase.storage().ref() into the provider');
             }
             const fileType = blob.type.split('/')[1];
-            const fullPath = (pathPrefix ? pathPrefix : '') + imageUUID + '.' + fileType;
+            const fullPath = ((uploadOptions === null || uploadOptions === void 0 ? void 0 : uploadOptions.pathPrefix) ? uploadOptions.pathPrefix : '') +
+                imageUUID +
+                '.' +
+                fileType;
             const firebaseImageRef = firebaseStorageRef.child(fullPath);
             const imageURI = yield firebaseImageRef
                 .put(blob, { customMetadata: dimensionMetadata })
@@ -410,14 +413,14 @@ const defaultAcceptedFileTypes = [
 const ImageUploadContext = React.createContext({});
 const ImageUploadContextProvider = ({ children, acceptedFileTypes = defaultAcceptedFileTypes, firebaseStorageRef, buttonColor, }) => {
     const [callbackFns, setCallbackFns] = React.useState();
-    const [pathPrefix, setPathPrefix] = React.useState('');
+    const [uploadOptions, setUploadOptions] = React.useState();
     const open = (successCallback, errorCallback, opts) => {
-        setPathPrefix((opts === null || opts === void 0 ? void 0 : opts.pathPrefix) || '');
+        setUploadOptions(opts);
         setCallbackFns({ successCallback, errorCallback });
     };
     const close = () => {
         setCallbackFns(undefined);
-        setPathPrefix('');
+        setUploadOptions(undefined);
     };
     return (React.createElement(ImageUploadContext.Provider, { value: {
             isOpen: Boolean(setCallbackFns),
@@ -425,7 +428,7 @@ const ImageUploadContextProvider = ({ children, acceptedFileTypes = defaultAccep
             close,
         } },
         children,
-        React.createElement(ImageUploadOverlay, { firebaseStorageRef: firebaseStorageRef, acceptedFileTypes: acceptedFileTypes, pathPrefix: pathPrefix, close: close, buttonColor: buttonColor, callbackFns: callbackFns })));
+        React.createElement(ImageUploadOverlay, { firebaseStorageRef: firebaseStorageRef, acceptedFileTypes: acceptedFileTypes, uploadOptions: uploadOptions, close: close, buttonColor: buttonColor, callbackFns: callbackFns })));
 };
 
 export { ImageUploadContext, ImageUploadContextProvider };

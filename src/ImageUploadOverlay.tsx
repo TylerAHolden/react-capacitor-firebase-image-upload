@@ -242,6 +242,12 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
       const imageUUID = uploadOptions?.imageFileName
         ? uploadOptions?.imageFileName
         : uuid();
+      console.log(
+        '[react-capacitor-firebase-image-upload] Uploading Image: ',
+        imageUUID,
+        'Opts:',
+        uploadOptions
+      );
       if (!firebaseStorageRef) {
         throw new Error(
           'Firebase Storage Reference Object not found. Make sure to pass firebase.storage().ref() into the provider'

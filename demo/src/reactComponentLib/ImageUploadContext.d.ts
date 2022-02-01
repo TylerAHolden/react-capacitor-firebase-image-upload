@@ -9,8 +9,9 @@ declare type ImageUploadContextProviderProps = {
     acceptedFileTypes?: string[];
     firebaseStorageRef: any;
 };
-declare type ImageUploadOptions = {
+export declare type ImageUploadOptions = {
     pathPrefix?: string;
+    imageFileName?: string;
 };
 export declare type ImageUploadSuccess = {
     downloadUrl: string;
