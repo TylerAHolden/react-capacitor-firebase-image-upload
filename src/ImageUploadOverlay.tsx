@@ -1,6 +1,10 @@
 import * as React from 'react';
 
-import { CallbackFns, ImageUploadSuccess } from './ImageUploadContext';
+import {
+  CallbackFns,
+  ImageUploadOptions,
+  ImageUploadSuccess,
+} from './ImageUploadContext';
 
 import Button from './Button';
 import { IonSpinner } from '@ionic/react';
@@ -112,7 +116,7 @@ interface ImageUploadOverlayProps {
   close: () => void;
   callbackFns?: CallbackFns;
   acceptedFileTypes: string[];
-  pathPrefix?: string;
+  uploadOptions?: ImageUploadOptions;
   firebaseStorageRef: any; // firebase.storage.Reference
 }
 
@@ -122,7 +126,7 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
   acceptedFileTypes,
   firebaseStorageRef,
   buttonColor,
-  pathPrefix,
+  uploadOptions,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [image, setImage] = React.useState('');
@@ -235,7 +239,9 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
         throw new Error('Cannot accept the file type: ' + blob.type);
       }
 
-      const imageUUID = uuid();
+      const imageUUID = uploadOptions?.imageFileName
+        ? uploadOptions?.imageFileName
+        : uuid();
       if (!firebaseStorageRef) {
         throw new Error(
           'Firebase Storage Reference Object not found. Make sure to pass firebase.storage().ref() into the provider'
@@ -244,7 +250,10 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
 
       const fileType = blob.type.split('/')[1];
       const fullPath =
-        (pathPrefix ? pathPrefix : '') + imageUUID + '.' + fileType;
+        (uploadOptions?.pathPrefix ? uploadOptions.pathPrefix : '') +
+        imageUUID +
+        '.' +
+        fileType;
       const firebaseImageRef = firebaseStorageRef.child(fullPath);
 
       const imageURI: string = await firebaseImageRef

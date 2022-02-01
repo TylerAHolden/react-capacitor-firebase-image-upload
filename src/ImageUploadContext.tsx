@@ -18,8 +18,9 @@ type ImageUploadContextProviderProps = {
   firebaseStorageRef: any; // firebase.storage.Reference
 };
 
-type ImageUploadOptions = {
+export type ImageUploadOptions = {
   pathPrefix?: string;
+  imageFileName?: string;
 };
 
 export type ImageUploadSuccess = {
@@ -49,48 +50,50 @@ export const ImageUploadContext = React.createContext<ImageUploadContextProps>(
   {} as ImageUploadContextProps
 );
 
-export const ImageUploadContextProvider: React.FC<ImageUploadContextProviderProps> =
-  ({
-    children,
-    acceptedFileTypes = defaultAcceptedFileTypes,
-    firebaseStorageRef,
-    buttonColor,
-  }) => {
-    const [callbackFns, setCallbackFns] = React.useState<CallbackFns>();
-    const [pathPrefix, setPathPrefix] = React.useState('');
+export const ImageUploadContextProvider: React.FC<
+  ImageUploadContextProviderProps
+> = ({
+  children,
+  acceptedFileTypes = defaultAcceptedFileTypes,
+  firebaseStorageRef,
+  buttonColor,
+}) => {
+  const [callbackFns, setCallbackFns] = React.useState<CallbackFns>();
+  const [uploadOptions, setUploadOptions] =
+    React.useState<ImageUploadOptions>();
 
-    const open = (
-      successCallback: CallbackFns['successCallback'],
-      errorCallback: CallbackFns['errorCallback'],
-      opts?: ImageUploadOptions
-    ) => {
-      setPathPrefix(opts?.pathPrefix || '');
+  const open = (
+    successCallback: CallbackFns['successCallback'],
+    errorCallback: CallbackFns['errorCallback'],
+    opts?: ImageUploadOptions
+  ) => {
+    setUploadOptions(opts);
 
-      setCallbackFns({ successCallback, errorCallback });
-    };
-
-    const close = () => {
-      setCallbackFns(undefined);
-      setPathPrefix('');
-    };
-
-    return (
-      <ImageUploadContext.Provider
-        value={{
-          isOpen: Boolean(setCallbackFns),
-          open,
-          close,
-        }}
-      >
-        {children}
-        <ImageUploadOverlay
-          firebaseStorageRef={firebaseStorageRef}
-          acceptedFileTypes={acceptedFileTypes}
-          pathPrefix={pathPrefix}
-          close={close}
-          buttonColor={buttonColor}
-          callbackFns={callbackFns}
-        />
-      </ImageUploadContext.Provider>
-    );
+    setCallbackFns({ successCallback, errorCallback });
   };
+
+  const close = () => {
+    setCallbackFns(undefined);
+    setUploadOptions(undefined);
+  };
+
+  return (
+    <ImageUploadContext.Provider
+      value={{
+        isOpen: Boolean(setCallbackFns),
+        open,
+        close,
+      }}
+    >
+      {children}
+      <ImageUploadOverlay
+        firebaseStorageRef={firebaseStorageRef}
+        acceptedFileTypes={acceptedFileTypes}
+        uploadOptions={uploadOptions}
+        close={close}
+        buttonColor={buttonColor}
+        callbackFns={callbackFns}
+      />
+    </ImageUploadContext.Provider>
+  );
+};
