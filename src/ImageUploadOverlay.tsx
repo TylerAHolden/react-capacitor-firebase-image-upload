@@ -9,10 +9,12 @@ import {
 import Button from './Button';
 import { IonSpinner } from '@ionic/react';
 import TitleBar from './TitleBar';
+import { getImageDimensions } from './utils/getImageDimensions';
 import { isPlatform } from '@ionic/react';
+import { nanoid } from 'nanoid';
 import { oxfordJoinArray } from './utils';
 import styled from 'styled-components';
-import { v4 as uuid } from 'uuid';
+import { uploadImageToFirebase } from './utils/uploadImage';
 
 type BlobLikeFile = File | null;
 
@@ -215,80 +217,15 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
     }
   };
 
-  const getImageDimensions = async (src: string) =>
-    new Promise<{ width: number; height: number }>((resolve) => {
-      var img = new Image();
-
-      img.onload = () => {
-        var height = img.height;
-        var width = img.width;
-        resolve({ width, height });
-      };
-
-      img.src = src;
-    });
-
   const uploadImage = async () => {
     try {
-      const res = await fetch(image);
-      const blob = await res.blob();
-
-      const dimensionMetadata = await getImageDimensions(image);
-
-      if (!acceptedFileTypes.includes(blob.type)) {
-        throw new Error('Cannot accept the file type: ' + blob.type);
-      }
-
-      const imageUUID = uploadOptions?.imageFileName
-        ? uploadOptions?.imageFileName
-        : uuid();
-      console.log(
-        '[react-capacitor-firebase-image-upload] Uploading Image: ',
-        imageUUID,
-        'Opts:',
-        uploadOptions
-      );
-      if (!firebaseStorageRef) {
-        throw new Error(
-          'Firebase Storage Reference Object not found. Make sure to pass firebase.storage().ref() into the provider'
-        );
-      }
-
-      const fileType = blob.type.split('/')[1];
-      const fullPath =
-        (uploadOptions?.pathPrefix ? uploadOptions.pathPrefix : '') +
-        imageUUID +
-        '.' +
-        fileType;
-      const firebaseImageRef = firebaseStorageRef.child(fullPath);
-
-      const imageURI: string = await firebaseImageRef
-        .put(blob, { customMetadata: dimensionMetadata })
-        .then(
-          async (snapshot: any) => {
-            const downloadURI = await snapshot.ref.getDownloadURL();
-            return downloadURI;
-          },
-          (err: any) => {
-            throw new Error(
-              err?.message || 'There was an error uploading the image :/'
-            );
-          }
-        );
-
-      if (imageURI) {
-        // force https for images
-        if (imageURI.indexOf('http:') !== -1) {
-          imageURI.replace('http:', 'https:');
-        }
-        _close({
-          downloadUrl: imageURI,
-          imageUUID,
-          fileType,
-          ...dimensionMetadata,
-          fullPath,
-        });
-      }
+      const successfulImageUploadObj = await uploadImageToFirebase({
+        image,
+        acceptedFileTypes,
+        firebaseStorageRef,
+        uploadOptions,
+      });
+      _close(successfulImageUploadObj);
     } catch (err) {
       console.log(err);
       if (err instanceof Error) {
@@ -365,6 +302,7 @@ const ImageUploadOverlay: React.FC<ImageUploadOverlayProps> = ({
             ) : (
               <SecretTextInput
                 value={''}
+                onChange={() => {}}
                 placeholder="Double tap here to paste an image"
               />
             )}

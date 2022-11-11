@@ -21,7 +21,7 @@
   "dependencies": {
     "@ionic/react": "^5.4.1",
     "ionicons": "^5.2.3",
-    "uuid": "^8.3.1"
+    "nanoid": "^4.0.0"
   },
   "peerDependencies": {
     "react": "^16.13.1",

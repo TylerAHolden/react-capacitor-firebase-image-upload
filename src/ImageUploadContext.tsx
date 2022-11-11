@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import ImageUploadOverlay from './ImageUploadOverlay';
+import { defaultAcceptedFileTypes } from './utils/defaultAcceptedFileTypes';
 
 type ImageUploadContextProps = {
   isOpen: boolean;
@@ -38,14 +39,6 @@ export type CallbackFns = {
   successCallback: (result: ImageUploadSuccess | ImageUploadCanceled) => void;
   errorCallback: (err: Error) => void;
 };
-
-const defaultAcceptedFileTypes = [
-  'image/png',
-  'image/jpeg',
-  'image/jpg',
-  'image/bmp',
-  'image/webp',
-];
 
 export const ImageUploadContext = React.createContext<ImageUploadContextProps>(
   {} as ImageUploadContextProps
