@@ -341,6 +341,7 @@ const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseSto
                 throw new Error('Cannot accept the file type: ' + blob.type);
             }
             const imageUUID = (uploadOptions === null || uploadOptions === void 0 ? void 0 : uploadOptions.imageFileName) ? uploadOptions === null || uploadOptions === void 0 ? void 0 : uploadOptions.imageFileName : v4();
+            console.log('[react-capacitor-firebase-image-upload] Uploading Image: ', imageUUID, 'Opts:', uploadOptions);
             if (!firebaseStorageRef) {
                 throw new Error('Firebase Storage Reference Object not found. Make sure to pass firebase.storage().ref() into the provider');
             }
@@ -407,6 +408,7 @@ const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseSto
 const defaultAcceptedFileTypes = [
     'image/png',
     'image/jpeg',
+    'image/jpg',
     'image/bmp',
     'image/webp',
 ];

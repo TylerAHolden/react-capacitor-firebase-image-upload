@@ -42,6 +42,7 @@ export type CallbackFns = {
 const defaultAcceptedFileTypes = [
   'image/png',
   'image/jpeg',
+  'image/jpg',
   'image/bmp',
   'image/webp',
 ];
