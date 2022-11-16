@@ -17,6 +17,14 @@ export const uploadImageToFirebase = async ({
   uploadOptions,
   firebaseStorageRef,
 }: UploadImageFn) => {
+  // for now don't do anything with url images
+  if (image.startsWith('http')) {
+    // just return the URL
+    return {
+      downloadUrl: image,
+      fullPath: image,
+    } as ImageUploadSuccess;
+  }
   const res = await fetch(image);
   const blob = await res.blob();
 

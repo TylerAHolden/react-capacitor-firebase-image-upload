@@ -9,9 +9,7 @@ import {
 import Button from './Button';
 import { IonSpinner } from '@ionic/react';
 import TitleBar from './TitleBar';
-import { getImageDimensions } from './utils/getImageDimensions';
 import { isPlatform } from '@ionic/react';
-import { nanoid } from 'nanoid';
 import { oxfordJoinArray } from './utils';
 import styled from 'styled-components';
 import { uploadImageToFirebase } from './utils/uploadImage';

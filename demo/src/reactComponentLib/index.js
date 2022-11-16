@@ -3,7 +3,7 @@ import * as React from 'react';
 import { isPlatform, IonIcon, IonSpinner } from '@ionic/react';
 import styled from 'styled-components';
 import { closeOutline } from 'ionicons/icons';
-import { v4 } from 'uuid';
+import { nanoid } from 'nanoid';
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -166,6 +166,73 @@ const oxfordJoinArray = (arr, conjunction, ifempty) => {
     return arr.join(', ');
 };
 
+const defaultAcceptedFileTypes = [
+    'image/png',
+    'image/jpeg',
+    'image/jpg',
+    'image/bmp',
+    'image/webp',
+];
+
+const getImageDimensions = (src) => __awaiter(void 0, void 0, void 0, function* () {
+    return new Promise((resolve) => {
+        var img = new Image();
+        img.onload = () => {
+            var height = img.height;
+            var width = img.width;
+            resolve({ width, height });
+        };
+        img.src = src;
+    });
+});
+
+const uploadImageToFirebase = ({ image, acceptedFileTypes = defaultAcceptedFileTypes, uploadOptions, firebaseStorageRef, }) => __awaiter(void 0, void 0, void 0, function* () {
+    // for now don't do anything with url images
+    if (image.startsWith('http')) {
+        // just return the URL
+        return {
+            downloadUrl: image,
+            fullPath: image,
+        };
+    }
+    const res = yield fetch(image);
+    const blob = yield res.blob();
+    const dimensionMetadata = yield getImageDimensions(image);
+    if (!acceptedFileTypes.includes(blob.type)) {
+        throw new Error('Cannot accept the file type: ' + blob.type);
+    }
+    const imageUUID = (uploadOptions === null || uploadOptions === void 0 ? void 0 : uploadOptions.imageFileName) ? uploadOptions === null || uploadOptions === void 0 ? void 0 : uploadOptions.imageFileName : nanoid();
+    console.log('[react-capacitor-firebase-image-upload] Uploading Image: ', imageUUID, 'Opts:', uploadOptions);
+    if (!firebaseStorageRef) {
+        throw new Error('Firebase Storage Reference Object not found. Make sure to pass firebase.storage().ref() into the provider');
+    }
+    const fileType = blob.type.split('/')[1];
+    const fullPath = ((uploadOptions === null || uploadOptions === void 0 ? void 0 : uploadOptions.pathPrefix) ? uploadOptions.pathPrefix : '') +
+        imageUUID +
+        '.' +
+        fileType;
+    const firebaseImageRef = firebaseStorageRef.child(fullPath);
+    const imageURI = yield firebaseImageRef
+        .put(blob, { customMetadata: dimensionMetadata })
+        .then((snapshot) => __awaiter(void 0, void 0, void 0, function* () {
+        const downloadURI = yield snapshot.ref.getDownloadURL();
+        return downloadURI;
+    }), (err) => {
+        throw new Error((err === null || err === void 0 ? void 0 : err.message) || 'There was an error uploading the image :/');
+    });
+    if (imageURI) {
+        // force https for images
+        if (imageURI.indexOf('http:') !== -1) {
+            imageURI.replace('http:', 'https:');
+        }
+        return Object.assign(Object.assign({ downloadUrl: imageURI, imageUUID,
+            fileType }, dimensionMetadata), { fullPath });
+    }
+    else {
+        throw new Error('There was an error uploading the image :/');
+    }
+});
+
 const Container = styled.div `
   position: fixed;
   z-index: 30000;
@@ -321,52 +388,15 @@ const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseSto
             return callbackFns === null || callbackFns === void 0 ? void 0 : callbackFns.errorCallback(new Error('No image or input found'));
         }
     };
-    const getImageDimensions = (src) => __awaiter(void 0, void 0, void 0, function* () {
-        return new Promise((resolve) => {
-            var img = new Image();
-            img.onload = () => {
-                var height = img.height;
-                var width = img.width;
-                resolve({ width, height });
-            };
-            img.src = src;
-        });
-    });
     const uploadImage = () => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const res = yield fetch(image);
-            const blob = yield res.blob();
-            const dimensionMetadata = yield getImageDimensions(image);
-            if (!acceptedFileTypes.includes(blob.type)) {
-                throw new Error('Cannot accept the file type: ' + blob.type);
-            }
-            const imageUUID = (uploadOptions === null || uploadOptions === void 0 ? void 0 : uploadOptions.imageFileName) ? uploadOptions === null || uploadOptions === void 0 ? void 0 : uploadOptions.imageFileName : v4();
-            console.log('[react-capacitor-firebase-image-upload] Uploading Image: ', imageUUID, 'Opts:', uploadOptions);
-            if (!firebaseStorageRef) {
-                throw new Error('Firebase Storage Reference Object not found. Make sure to pass firebase.storage().ref() into the provider');
-            }
-            const fileType = blob.type.split('/')[1];
-            const fullPath = ((uploadOptions === null || uploadOptions === void 0 ? void 0 : uploadOptions.pathPrefix) ? uploadOptions.pathPrefix : '') +
-                imageUUID +
-                '.' +
-                fileType;
-            const firebaseImageRef = firebaseStorageRef.child(fullPath);
-            const imageURI = yield firebaseImageRef
-                .put(blob, { customMetadata: dimensionMetadata })
-                .then((snapshot) => __awaiter(void 0, void 0, void 0, function* () {
-                const downloadURI = yield snapshot.ref.getDownloadURL();
-                return downloadURI;
-            }), (err) => {
-                throw new Error((err === null || err === void 0 ? void 0 : err.message) || 'There was an error uploading the image :/');
+            const successfulImageUploadObj = yield uploadImageToFirebase({
+                image,
+                acceptedFileTypes,
+                firebaseStorageRef,
+                uploadOptions,
             });
-            if (imageURI) {
-                // force https for images
-                if (imageURI.indexOf('http:') !== -1) {
-                    imageURI.replace('http:', 'https:');
-                }
-                _close(Object.assign(Object.assign({ downloadUrl: imageURI, imageUUID,
-                    fileType }, dimensionMetadata), { fullPath }));
-            }
+            _close(successfulImageUploadObj);
         }
         catch (err) {
             console.log(err);
@@ -402,16 +432,9 @@ const ImageUploadOverlay = ({ close, callbackFns, acceptedFileTypes, firebaseSto
                 React.createElement(Button, { onClick: getFile, color: buttonColor || '#222' }, "Browse Files"),
                 React.createElement(HiddenInput, { onChange: (e) => getImageFileData(e), ref: webInputRef, type: "file" }),
                 React.createElement(OrText, null, "or"),
-                isPlatform('desktop') ? (React.createElement(OrText, null, "\u2318 + V to Paste an Image or URL")) : (React.createElement(SecretTextInput, { value: '', placeholder: "Double tap here to paste an image" })))))));
+                isPlatform('desktop') ? (React.createElement(OrText, null, "\u2318 + V to Paste an Image or URL")) : (React.createElement(SecretTextInput, { value: '', onChange: () => { }, placeholder: "Double tap here to paste an image" })))))));
 };
 
-const defaultAcceptedFileTypes = [
-    'image/png',
-    'image/jpeg',
-    'image/jpg',
-    'image/bmp',
-    'image/webp',
-];
 const ImageUploadContext = React.createContext({});
 const ImageUploadContextProvider = ({ children, acceptedFileTypes = defaultAcceptedFileTypes, firebaseStorageRef, buttonColor, }) => {
     const [callbackFns, setCallbackFns] = React.useState();
@@ -433,4 +456,4 @@ const ImageUploadContextProvider = ({ children, acceptedFileTypes = defaultAccep
         React.createElement(ImageUploadOverlay, { firebaseStorageRef: firebaseStorageRef, acceptedFileTypes: acceptedFileTypes, uploadOptions: uploadOptions, close: close, buttonColor: buttonColor, callbackFns: callbackFns })));
 };
 
-export { ImageUploadContext, ImageUploadContextProvider };
+export { ImageUploadContext, ImageUploadContextProvider, uploadImageToFirebase };
